@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deadfin: a Jellyfin-compatible media server written in Go</title>
+<meta name="description" content="Deadfin is a media server written in Go that serves the Jellyfin API. Existing Jellyfin apps connect unchanged.">
+<link rel="canonical" href="https://deadfin.org/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#060B12" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5F8FA" media="(prefers-color-scheme: light)">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deadfin">
+<meta property="og:url" content="https://deadfin.org/">
+<meta property="og:title" content="Deadfin">
+<meta property="og:description" content="A Jellyfin-compatible media server written in Go. Existing Jellyfin apps connect unchanged.">
+<meta property="og:image" content="https://deadfin.org/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="Deadfin logo: a shark inside a ring. Text: A Jellyfin-compatible media server in Go.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deadfin">
+<meta name="twitter:description" content="A Jellyfin-compatible media server written in Go. Existing Jellyfin apps connect unchanged.">
+<meta name="twitter:image" content="https://deadfin.org/og.png">
+<meta name="twitter:image:alt" content="Deadfin logo: a shark inside a ring. Text: A Jellyfin-compatible media server in Go.">
+
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><img src="/deadfin.svg" alt="" width="32" height="32"><span>Deadfin</span></a>
+  <nav aria-label="Main">
+    <a href="#quick-start">Quick start</a>
+    <a href="#status">Status</a>
+    <a href="https://github.com/deadfin-org/deadfin">GitHub</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <img class="logo" src="/deadfin.svg" alt="Deadfin logo" width="160" height="160">
+  <h1>A Jellyfin-compatible media server written in Go.</h1>
+  <p class="lede">Deadfin serves the Jellyfin 12.0 API. The Jellyfin apps you already use, such as jellyfin-web, Swiftfin, Jellyfin for Android TV and Infuse, connect to it unchanged.</p>
+  <p class="cta">
+    <a class="button primary" href="#quick-start">Quick start</a>
+    <a class="button" href="https://github.com/deadfin-org/deadfin">Source on GitHub</a>
+  </p>
+  <ul class="facts">
+    <li><strong>One Go process.</strong> No .NET runtime. Multi-arch image (amd64 and arm64) with Jellyfin's FFmpeg build.</li>
+    <li><strong>Hardware transcoding.</strong> Intel QSV and VAAPI, NVIDIA NVENC, with HDR10, HLG and Dolby Vision tone mapping.</li>
+    <li><strong>Moves in from Jellyfin.</strong> A one-way importer brings users, watch state, playlists, collections and libraries. It only reads Jellyfin's files.</li>
+    <li><strong>SQLite or PostgreSQL.</strong> SQLite by default, with no setup.</li>
+  </ul>
+</section>
+
+<section id="quick-start">
+  <h2>Quick start</h2>
+  <p>Deadfin listens on TCP <strong>8096</strong> and answers client discovery on UDP <strong>7359</strong>. All its state lives in <code>/var/lib/deadfin</code> in the container. The container runs as UID/GID 65532.</p>
+
+  <ol class="steps">
+    <li>
+      <h3>Get a TMDb API key</h3>
+      <p>Movie and TV metadata and artwork come from <a href="https://www.themoviedb.org/">TMDb</a>. Each Deadfin server uses its own key. A free v3 key takes a few minutes at <a href="https://www.themoviedb.org/settings/api">themoviedb.org/settings/api</a>. Set it before the first library scan.</p>
+    </li>
+    <li>
+      <h3>Get a web client</h3>
+      <p>The image carries no web client. Copy jellyfin-web 12.0 out of the stock Jellyfin image once:</p>
+<pre><code>mkdir -p ./deadfin/data ./deadfin/web
+sudo chown 65532:65532 ./deadfin/data
+cid=$(docker create jellyfin/jellyfin@sha256:2d1a69be5aa2695d0c2df90ebeb76bbcc6efc0a798cb09bfa65906680e1d785a)
+docker cp "$cid":/jellyfin/jellyfin-web/. ./deadfin/web/
+docker rm "$cid"</code></pre>
+    </li>
+    <li>
+      <h3>Run Deadfin</h3>
+      <p><code>:alpha</code> follows the newest release or release candidate. To control upgrades, pin a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place.</p>
+<pre><code># compose.yaml
+services:
+  deadfin:
+    image: ghcr.io/deadfin-org/deadfin:alpha
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+      - "7359:7359/udp"
+    environment:
+      TMDB_API_KEY: "your-key"   # from step 1: movie and TV metadata and art
+    volumes:
+      - ./deadfin/data:/var/lib/deadfin
+      - ./deadfin/web:/var/lib/deadfin/web:ro
+      - /srv/media:/media:ro</code></pre>
+<pre><code>docker compose up -d</code></pre>
+      <details>
+        <summary>The same with <code>docker run</code></summary>
+<pre><code>docker run -d --name deadfin --restart unless-stopped \
+  -p 8096:8096 -p 7359:7359/udp \
+  -e TMDB_API_KEY=your-key \
+  -v "$PWD/deadfin/data:/var/lib/deadfin" \
+  -v "$PWD/deadfin/web:/var/lib/deadfin/web:ro" \
+  -v /srv/media:/media:ro \
+  ghcr.io/deadfin-org/deadfin:alpha</code></pre>
+      </details>
+    </li>
+    <li>
+      <h3>Finish setup</h3>
+      <p>Open <code>http://&lt;host&gt;:8096/web/</code> from your local network and complete the startup wizard. Behind a reverse proxy, use the one-time setup link that Deadfin prints in its log.</p>
+    </li>
+  </ol>
+  <p>The <a href="/install">install guide</a> covers volumes, PostgreSQL, reverse proxies, hardware transcoding, adding libraries and upgrades. To move from Jellyfin, read <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/importing-from-jellyfin.md">importing from Jellyfin</a>.</p>
+</section>
+
+<section id="status">
+  <h2>Status: alpha</h2>
+  <p>Deadfin is alpha software. Back up your data, expect defects, and keep your Jellyfin server around while you try it.</p>
+
+  <h3>Works today</h3>
+  <p>First-run setup, sign-in and QuickConnect, library scans with TMDb, TheAudioDB and AniList metadata, browsing and search, direct play, HLS transcoding, external and embedded subtitles (including burn-in), resume and played state, playlists and collections, music, trickplay previews, and the Jellyfin importer.</p>
+  <p>Live TV, DVR and SyncPlay are on the <a href="https://github.com/deadfin-org/deadfin/blob/master/ROADMAP.md">roadmap</a>.</p>
+
+  <h3>Clients</h3>
+  <p><strong>UI</strong>: tested with the real app. <strong>API</strong>: the app's own requests replayed against Deadfin.</p>
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th scope="col">Client</th><th scope="col">Sign-in</th><th scope="col">Browse</th><th scope="col">Direct play</th><th scope="col">Transcode</th><th scope="col">Subtitles</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">jellyfin-web 12.0</th><td class="ok">UI</td><td class="ok">UI</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">Swiftfin (iOS)</th><td class="ok">API</td><td class="ok">API</td><td class="ok">API</td><td class="ok">API</td><td class="ok">API</td></tr>
+      <tr><th scope="row">Jellyfin for Android TV</th><td>—</td><td>—</td><td class="ok">API</td><td class="ok">API</td><td class="ok">API</td></tr>
+      <tr><th scope="row">Infuse</th><td>—</td><td>—</td><td class="ok">API</td><td>direct-plays</td><td class="ok">API</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">— means no result yet. Findroid, Streamyfin, Jellyfin Media Player, Swiftfin on tvOS and others have test steps in the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">full client matrix</a>. Tested a client? Open a client compatibility report on GitHub.</p>
+
+  <h3>Differences from Jellyfin</h3>
+  <p>Each intentional difference has an entry in <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/divergences.md">divergences</a>. The plain-language version is <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/known-differences.md">known differences</a>. First questions about artwork, HDR, the web client, GPUs and reverse proxies are in the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/faq.md">FAQ</a>.</p>
+</section>
+
+<section id="links">
+  <h2>Links</h2>
+  <ul class="links">
+    <li><a href="https://github.com/deadfin-org/deadfin">GitHub</a><span>Source, issues and pull requests</span></li>
+    <li><a href="https://github.com/deadfin-org/deadfin/releases">Releases</a><span>Release notes and images</span></li>
+    <li><a href="https://github.com/deadfin-org/deadfin/blob/master/docs/README.md">Documentation</a><span>Every guide, in one index</span></li>
+    <li><a href="https://github.com/deadfin-org/deadfin/discussions">Discussions</a><span>Questions and ideas</span></li>
+    <li><a href="https://github.com/deadfin-org/deadfin/security">Security advisories</a><span>Report a vulnerability privately</span></li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <p>Deadfin is free software under the <a href="https://github.com/deadfin-org/deadfin/blob/master/LICENSE">GNU General Public License, version 2</a> (GPL-2.0-only).</p>
+  <p>Deadfin is not affiliated with the Jellyfin project. Jellyfin is a trademark of its respective owners.</p>
+</footer>
+</body>
+</html>
