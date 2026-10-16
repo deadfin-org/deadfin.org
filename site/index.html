@@ -46,7 +46,7 @@
 <section class="hero">
   <img class="logo" src="/deadfin.svg" alt="Deadfin logo" width="160" height="160">
   <h1>A Jellyfin-compatible media server written in Go.</h1>
-  <p class="lede">Deadfin serves the Jellyfin 12.0 API. Use its own web client, deadfin-web, or the Jellyfin apps you already have. Most familiar flows work unchanged; the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">client matrix</a> lists the tested paths and the known alpha gaps.</p>
+  <p class="lede">Deadfin serves the Jellyfin 12.0 API. Use your Jellyfin apps with Deadfin. Most familiar flows work unchanged; see the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">client matrix</a> for tested paths and known alpha gaps.</p>
   <p class="cta">
     <a class="button primary" href="#quick-start">Quick start</a>
     <a class="button" href="https://github.com/deadfin-org/deadfin">Source on GitHub</a>
@@ -61,39 +61,39 @@
 
 <section id="clients">
   <h2>Choose your client</h2>
+  <p>Use your Jellyfin apps with Deadfin. Pick a web interface for the browser and for server setup, then add the apps you already use.</p>
   <ul class="clients">
     <li>
-      <h3>deadfin-web <span class="badge alpha">Experimental alpha</span></h3>
-      <p class="pick">The default and recommended interface. A new web client for Deadfin, served by the server at <code>/web/</code>.</p>
+      <h3>deadfin-web <span class="badge alpha">Recommended</span></h3>
+      <p class="pick">Recommended. Experimental alpha.</p>
       <dl>
-        <dt>Install</dt><dd>Unpack the release bundle into the server's web directory. <a href="#quick-start">Quick start</a>, step 2.</dd>
-        <dt>Biggest gap</dt><dd>No admin dashboard yet. Use jellyfin-web for server settings.</dd>
+        <dt>Install</dt><dd><a href="#quick-start">Quick start</a>, step 2: a <a href="https://github.com/deadfin-org/deadfin-web/releases">release</a> in <code>./deadfin/web</code>. Deadfin serves it at <code>/web/</code>.</dd>
+        <dt>Biggest gap</dt><dd>No admin dashboard after first-run setup. For users, library changes and server settings, put jellyfin-web in <code>./deadfin/web</code> instead.</dd>
       </dl>
       <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web on GitHub</a>
     </li>
     <li>
       <h3>jellyfin-web 12.0 <span class="badge stable">Complete</span></h3>
-      <p class="pick">The stock Jellyfin web client, with every page and the full admin dashboard.</p>
+      <p class="pick">Stock and complete: every page, including the dashboard.</p>
       <dl>
-        <dt>Install</dt><dd>Copy it out of the stock Jellyfin image into the same web directory. <a href="#quick-start">Quick start</a>, step 2.</dd>
+        <dt>Install</dt><dd><a href="#quick-start">Quick start</a>, step 2: copy it out of the Jellyfin image.</dd>
         <dt>Biggest gap</dt><dd>Some dashboard pages (devices, logs, NFO settings) show errors.</dd>
       </dl>
     </li>
     <li>
-      <h3>Jellyfin apps <span class="badge tested">Tested per app</span></h3>
-      <p class="pick">Swiftfin, Infuse, Jellyfin for Android TV and other Jellyfin apps sign in to Deadfin as they do to Jellyfin.</p>
+      <h3>Jellyfin apps <span class="badge tested">Stock apps</span></h3>
+      <p class="pick">Swiftfin, Infuse, Jellyfin for Android and Android TV, and others. Unchanged stock apps.</p>
       <dl>
-        <dt>Install</dt><dd>From each app's store. Add the server by its address.</dd>
-        <dt>Biggest gap</dt><dd>Coverage differs per app. Some apps are tested only with their own requests, not the real app.</dd>
+        <dt>Install</dt><dd>Add the server by its URL, as for Jellyfin.</dd>
+        <dt>Biggest gap</dt><dd>Per app and per path: see the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">client matrix</a>.</dd>
       </dl>
-      <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">Client matrix</a>
     </li>
     <li>
       <h3>SharkParty <span class="badge pre">tvOS pre-alpha</span></h3>
-      <p class="pick">An Apple TV client for Deadfin and Jellyfin, forked from Swiftfin.</p>
+      <p class="pick">Pre-alpha tvOS app, a Swiftfin fork.</p>
       <dl>
-        <dt>Install</dt><dd>Build from source with Xcode 27. Needs tvOS 26.1 or later. No TestFlight or App Store build.</dd>
-        <dt>Biggest gap</dt><dd>Tested in the tvOS Simulator only, not yet on a physical Apple TV.</dd>
+        <dt>Install</dt><dd>Build from source with Xcode.</dd>
+        <dt>Biggest gap</dt><dd>No App Store or TestFlight build.</dd>
       </dl>
       <a href="https://github.com/deadfin-org/SharkParty">SharkParty on GitHub</a>
     </li>
@@ -138,20 +138,15 @@
     </li>
     <li>
       <h3>Get a web client</h3>
-      <p>The image carries no web client. Deadfin serves the files in <code>./deadfin/web</code> at <code>/web/</code>. Put deadfin-web there: take the newest <code>deadfin-web-&lt;version&gt;.tar.gz</code> from the <a href="https://github.com/deadfin-org/deadfin-web/releases">deadfin-web releases</a> and set <code>VERSION</code> to its version.</p>
+      <p>The image carries no web client. Put <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web</a> in <code>./deadfin/web</code>:</p>
 <pre><code>mkdir -p ./deadfin/data ./deadfin/web
 sudo chown 65532:65532 ./deadfin/data
-VERSION=x.y.z
-curl -fsSL "https://github.com/deadfin-org/deadfin-web/releases/download/v$VERSION/deadfin-web-$VERSION.tar.gz" \
+curl -fsSL https://github.com/deadfin-org/deadfin-web/releases/download/v0.3.0-rc.3/deadfin-web-0.3.0-rc.3.tar.gz \
   | tar -xz --strip-components=1 -C ./deadfin/web</code></pre>
-      <details>
-        <summary>Use jellyfin-web 12.0 instead</summary>
-<pre><code>mkdir -p ./deadfin/data ./deadfin/web
-sudo chown 65532:65532 ./deadfin/data
-cid=$(docker create jellyfin/jellyfin@sha256:2d1a69be5aa2695d0c2df90ebeb76bbcc6efc0a798cb09bfa65906680e1d785a)
+      <p>For the complete stock interface with the admin dashboard, use jellyfin-web 12.0 instead: copy it out of the Jellyfin image into the same directory.</p>
+<pre><code>cid=$(docker create jellyfin/jellyfin@sha256:2d1a69be5aa2695d0c2df90ebeb76bbcc6efc0a798cb09bfa65906680e1d785a)
 docker cp "$cid":/jellyfin/jellyfin-web/. ./deadfin/web/
 docker rm "$cid"</code></pre>
-      </details>
     </li>
     <li>
       <h3>Run Deadfin</h3>
