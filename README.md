@@ -36,9 +36,9 @@ that date.
 
 ## Captures
 
-The "See it" section on the page holds placeholders. Each capture needs a
-real recording against a current Deadfin release, with the client's
-maturity in the caption. Put images in `site/media/` as WebP or PNG,
+The page has no "See it" section yet. Add it back when these captures
+exist. Each capture needs a real recording against a current Deadfin
+release, with the client's maturity in the caption. Put images in `site/media/` as WebP or PNG,
 1600 px wide, 16:10, light or dark theme to match the page default (dark).
 Use generated or freely licensed media only, with no personal library
 titles.

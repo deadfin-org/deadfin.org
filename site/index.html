@@ -67,8 +67,8 @@
       <h3>deadfin-web <span class="badge alpha">Recommended</span></h3>
       <p class="pick">Recommended. Experimental alpha.</p>
       <dl>
-        <dt>Install</dt><dd><a href="#quick-start">Quick start</a>, step 2: a <a href="https://github.com/deadfin-org/deadfin-web/releases">release</a> in <code>./deadfin/web</code>. Deadfin serves it at <code>/web/</code>.</dd>
-        <dt>Biggest gap</dt><dd>No admin dashboard after first-run setup. For users, library changes and server settings, put jellyfin-web in <code>./deadfin/web</code> instead.</dd>
+        <dt>Install</dt><dd>Included in the Deadfin image. Deadfin serves it at <code>/web/</code>.</dd>
+        <dt>Biggest gap</dt><dd>No admin dashboard after first-run setup. For users, library changes and server settings, <a href="https://github.com/deadfin-org/deadfin#use-jellyfin-web-instead">use jellyfin-web instead</a>.</dd>
       </dl>
       <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web on GitHub</a>
     </li>
@@ -76,7 +76,7 @@
       <h3>jellyfin-web 12.0 <span class="badge stable">Complete</span></h3>
       <p class="pick">Stock and complete: every page, including the dashboard.</p>
       <dl>
-        <dt>Install</dt><dd><a href="#quick-start">Quick start</a>, step 2: copy it out of the Jellyfin image.</dd>
+        <dt>Install</dt><dd>Copy it out of the Jellyfin image into <code>./deadfin/web</code>: see <a href="https://github.com/deadfin-org/deadfin#use-jellyfin-web-instead">use jellyfin-web instead</a>.</dd>
         <dt>Biggest gap</dt><dd>Some dashboard pages (devices, logs, NFO settings) show errors.</dd>
       </dl>
     </li>
@@ -100,33 +100,6 @@
   </ul>
 </section>
 
-<section id="see-it">
-  <h2>See it</h2>
-  <!-- TODO(captures): replace each placeholder with a real capture. The list is in README.md, "Captures". -->
-  <div class="shots">
-    <figure class="shot">
-      <div class="shot-slot" role="img" aria-label="Screenshot placeholder: first-run setup">Capture pending</div>
-      <figcaption><strong>First-run setup</strong> · deadfin-web <span class="badge alpha">Experimental alpha</span></figcaption>
-    </figure>
-    <figure class="shot">
-      <div class="shot-slot" role="img" aria-label="Screenshot placeholder: browsing a library">Capture pending</div>
-      <figcaption><strong>Browsing</strong> · deadfin-web <span class="badge alpha">Experimental alpha</span></figcaption>
-    </figure>
-    <figure class="shot">
-      <div class="shot-slot" role="img" aria-label="Screenshot placeholder: playback">Capture pending</div>
-      <figcaption><strong>Playback</strong> · deadfin-web <span class="badge alpha">Experimental alpha</span></figcaption>
-    </figure>
-    <figure class="shot">
-      <div class="shot-slot" role="img" aria-label="Screenshot placeholder: SharkParty on Apple TV">Capture pending</div>
-      <figcaption><strong>Apple TV</strong> · SharkParty <span class="badge pre">tvOS pre-alpha</span></figcaption>
-    </figure>
-  </div>
-  <figure class="shot demo">
-    <div class="shot-slot wide" role="img" aria-label="Video placeholder: short demo of setup, browsing and playback">Demo video pending</div>
-    <figcaption><strong>Demo, about 60 seconds</strong>: setup, browsing and playback · deadfin-web <span class="badge alpha">Experimental alpha</span></figcaption>
-  </figure>
-</section>
-
 <section id="quick-start">
   <h2>Quick start</h2>
   <p>Deadfin listens on TCP <strong>8096</strong> and answers client discovery on UDP <strong>7359</strong>. All its state lives in <code>/var/lib/deadfin</code> in the container. The container runs as UID/GID 65532.</p>
@@ -137,20 +110,15 @@
       <p>Movie and TV metadata and artwork come from <a href="https://www.themoviedb.org/">TMDb</a>. Each Deadfin server uses its own key. A free v3 key takes a few minutes at <a href="https://www.themoviedb.org/settings/api">themoviedb.org/settings/api</a>. Set it before the first library scan.</p>
     </li>
     <li>
-      <h3>Get a web client</h3>
-      <p>The image carries no web client. Put <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web</a> in <code>./deadfin/web</code>:</p>
-<pre><code>mkdir -p ./deadfin/data ./deadfin/web
-sudo chown 65532:65532 ./deadfin/data
-curl -fsSL https://github.com/deadfin-org/deadfin-web/releases/download/v0.3.0-rc.3/deadfin-web-0.3.0-rc.3.tar.gz \
-  | tar -xz --strip-components=1 -C ./deadfin/web</code></pre>
-      <p>For the complete stock interface with the admin dashboard, use jellyfin-web 12.0 instead: copy it out of the Jellyfin image into the same directory.</p>
-<pre><code>cid=$(docker create jellyfin/jellyfin@sha256:2d1a69be5aa2695d0c2df90ebeb76bbcc6efc0a798cb09bfa65906680e1d785a)
-docker cp "$cid":/jellyfin/jellyfin-web/. ./deadfin/web/
-docker rm "$cid"</code></pre>
+      <h3>Make the data directory</h3>
+      <p>The container runs as UID/GID 65532:</p>
+<pre><code>mkdir -p ./deadfin/data
+sudo chown 65532:65532 ./deadfin/data</code></pre>
+      <p>The image includes <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web</a>, the web client. For the complete stock interface with the admin dashboard, <a href="https://github.com/deadfin-org/deadfin#use-jellyfin-web-instead">use jellyfin-web instead</a>.</p>
     </li>
     <li>
       <h3>Run Deadfin</h3>
-      <p><code>:alpha</code> follows the newest release or release candidate. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:v0.3.0-rc.6</code>.</p>
+      <p><code>:alpha</code> follows the newest release or release candidate. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:v0.3.0-rc.8</code>.</p>
 <pre><code># compose.yaml
 services:
   deadfin:
@@ -163,7 +131,6 @@ services:
       TMDB_API_KEY: "your-key"   # from step 1: movie and TV metadata and art
     volumes:
       - ./deadfin/data:/var/lib/deadfin
-      - ./deadfin/web:/var/lib/deadfin/web:ro
       - /srv/media:/media:ro</code></pre>
 <pre><code>docker compose up -d</code></pre>
       <details>
@@ -172,7 +139,6 @@ services:
   -p 8096:8096 -p 7359:7359/udp \
   -e TMDB_API_KEY=your-key \
   -v "$PWD/deadfin/data:/var/lib/deadfin" \
-  -v "$PWD/deadfin/web:/var/lib/deadfin/web:ro" \
   -v /srv/media:/media:ro \
   ghcr.io/deadfin-org/deadfin:alpha</code></pre>
       </details>
