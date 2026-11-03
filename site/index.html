@@ -46,7 +46,8 @@
 <section class="hero">
   <img class="logo" src="/deadfin.svg" alt="Deadfin logo" width="160" height="160">
   <h1>A Jellyfin-compatible media server written in Go.</h1>
-  <p class="lede">Deadfin serves the Jellyfin 12.0 API. Use your Jellyfin apps with Deadfin. Most familiar flows work unchanged; see the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">client matrix</a> for tested paths and known alpha gaps.</p>
+  <p class="lede">Deadfin serves the Jellyfin 12.0 API, so your Jellyfin apps connect to it as they connect to Jellyfin. The image includes its own web client, deadfin-web.</p>
+  <p class="release">Current release: <a href="https://github.com/deadfin-org/deadfin/releases/tag/v0.3.1">v0.3.1</a> (alpha). 0.4.0 is in development: <a href="#next">see what comes next</a>.</p>
   <p class="cta">
     <a class="button primary" href="#quick-start">Quick start</a>
     <a class="button" href="https://github.com/deadfin-org/deadfin">Source on GitHub</a>
@@ -67,7 +68,7 @@
       <h3>deadfin-web <span class="badge alpha">Recommended</span></h3>
       <p class="pick">Recommended. Experimental alpha.</p>
       <dl>
-        <dt>Install</dt><dd>Included in the Deadfin image. Deadfin serves it at <code>/web/</code>.</dd>
+        <dt>Install</dt><dd>Included in the Deadfin image (deadfin-web v0.3.0). Deadfin serves it at <code>/web/</code>.</dd>
         <dt>Biggest gap</dt><dd>No admin dashboard after first-run setup. For users, library changes and server settings, <a href="https://github.com/deadfin-org/deadfin#use-jellyfin-web-instead">use jellyfin-web instead</a>.</dd>
       </dl>
       <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web on GitHub</a>
@@ -107,7 +108,7 @@
   <ol class="steps">
     <li>
       <h3>Get a TMDb API key</h3>
-      <p>Movie and TV metadata and artwork come from <a href="https://www.themoviedb.org/">TMDb</a>. Each Deadfin server uses its own key. A free v3 key takes a few minutes at <a href="https://www.themoviedb.org/settings/api">themoviedb.org/settings/api</a>. Set it before the first library scan.</p>
+      <p>Movie and TV metadata and artwork come from <a href="https://www.themoviedb.org/">TMDb</a>. Each Deadfin server uses its own key. A free v3 key takes a few minutes at <a href="https://www.themoviedb.org/settings/api">themoviedb.org/settings/api</a>. Set it before the first library scan. Without a key, movies and shows show their file names and no artwork.</p>
     </li>
     <li>
       <h3>Make the data directory</h3>
@@ -118,11 +119,11 @@ sudo chown 65532:65532 ./deadfin/data</code></pre>
     </li>
     <li>
       <h3>Run Deadfin</h3>
-      <p><code>:alpha</code> follows the newest release or release candidate. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:v0.3.0-rc.8</code>.</p>
+      <p><code>:latest</code> follows the newest release. <code>:alpha</code> also follows release candidates. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:v0.3.1</code>.</p>
 <pre><code># compose.yaml
 services:
   deadfin:
-    image: ghcr.io/deadfin-org/deadfin:alpha
+    image: ghcr.io/deadfin-org/deadfin:latest
     restart: unless-stopped
     ports:
       - "8096:8096"
@@ -140,7 +141,7 @@ services:
   -e TMDB_API_KEY=your-key \
   -v "$PWD/deadfin/data:/var/lib/deadfin" \
   -v /srv/media:/media:ro \
-  ghcr.io/deadfin-org/deadfin:alpha</code></pre>
+  ghcr.io/deadfin-org/deadfin:latest</code></pre>
       </details>
     </li>
     <li>
@@ -157,7 +158,7 @@ services:
 
   <h3>Works today</h3>
   <p>First-run setup, sign-in and QuickConnect, library scans with TMDb, TheAudioDB and AniList metadata, browsing and search, direct play, HLS transcoding, external and embedded subtitles (including burn-in), resume and played state, playlists and collections, music, trickplay previews, and the Jellyfin importer.</p>
-  <p>Live TV, DVR and SyncPlay are on the <a href="https://github.com/deadfin-org/deadfin/blob/master/ROADMAP.md">roadmap</a>.</p>
+  <p>Not available yet: Live TV and DVR, SyncPlay, plugins and DLNA.</p>
 
   <h3>Clients</h3>
   <p><strong>app</strong>: the real app ran against Deadfin. <strong>QA</strong>: the Apple TV QA matrix (server checks plus a macOS AVPlayer probe). <strong>API</strong>: only the app's own requests were sent to Deadfin.</p>
@@ -175,10 +176,20 @@ services:
     </tbody>
   </table>
   </div>
-  <p class="note">— means no result yet. ⚠: on Apple TV, Swiftfin's native player failed on Dolby Vision profile 7 and on a 20 Mbit/s H.264 transcode with rc.5. The fix is in v0.3.0-rc.6; the Apple TV retest is pending. Findroid, Streamyfin, Jellyfin Media Player and others have test steps in the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">full client matrix</a>. Tested a client? Open a client compatibility report on GitHub.</p>
+  <p class="note">— means no result yet. ⚠: on Apple TV, Swiftfin's native player failed on Dolby Vision profile 7 and on a 20 Mbit/s H.264 transcode with rc.5. Fixed in v0.3.0-rc.6; the Apple TV retest is pending. Findroid, Streamyfin, Jellyfin Media Player and others have test steps in the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/client-matrix.md">full client matrix</a>. Tested a client? Open a <a href="https://github.com/deadfin-org/deadfin/issues/new?template=client-compat.yml">client compatibility report</a>.</p>
 
   <h3>Differences from Jellyfin</h3>
   <p>Each intentional difference has an entry in <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/divergences.md">divergences</a>. The plain-language version is <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/known-differences.md">known differences</a>. First questions about artwork, HDR, the web client, GPUs and reverse proxies are in the <a href="https://github.com/deadfin-org/deadfin/blob/master/docs/alpha/faq.md">FAQ</a>.</p>
+
+  <h3 id="next">Next: 0.4.0</h3>
+  <p>0.4.0 is in development. It adds:</p>
+  <ul>
+    <li><strong>Live TV.</strong> M3U tuners, an XMLTV guide, live playback through a shared stream broker, channel lists and per-user Live TV access.</li>
+    <li><strong>Remote transcode workers.</strong> <code>deadfin worker</code> transcodes on the GPU of another host, with local fallback.</li>
+    <li><strong>Stream edge.</strong> <code>deadfin edge</code> keeps streams playing while the server restarts.</li>
+    <li><strong>Server replicas.</strong> Two or more server processes share one PostgreSQL database and hand over play sessions during a rolling update.</li>
+  </ul>
+  <p>DVR and SyncPlay are on the <a href="https://github.com/deadfin-org/deadfin/blob/master/ROADMAP.md">roadmap</a>.</p>
 </section>
 
 <section id="links">
@@ -186,6 +197,7 @@ services:
   <ul class="links">
     <li><a href="https://github.com/deadfin-org/deadfin">GitHub</a><span>Source, issues and pull requests</span></li>
     <li><a href="https://github.com/deadfin-org/deadfin/releases">Releases</a><span>Release notes and images</span></li>
+    <li><a href="https://github.com/deadfin-org/deadfin/blob/master/CHANGELOG.md">Changelog</a><span>Every change, per release</span></li>
     <li><a href="https://github.com/deadfin-org/deadfin/blob/master/docs/README.md">Documentation</a><span>Every guide, in one index</span></li>
     <li><a href="https://github.com/deadfin-org/deadfin/discussions">Discussions</a><span>Questions and ideas</span></li>
     <li><a href="https://github.com/deadfin-org/deadfin/security">Security advisories</a><span>Report a vulnerability privately</span></li>
