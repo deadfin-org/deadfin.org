@@ -14,7 +14,7 @@ problems with the site there.
 | `site/install/index.html` | Sends `/install` to the install guide on GitHub. |
 | `scripts/stamp-versions.sh` | Copies `site/` to `_site/` and stamps the release versions. |
 | `scripts/check-site.sh` | Required files, term scan, placeholder, `CNAME` and `security.txt` checks. |
-| `.github/workflows/pages.yml` | Checks every pull request. A push to `main`, a daily run and each Deadfin release publish `_site/` to GitHub Pages. |
+| `.github/workflows/pages.yml` | Checks every pull request. A push to `main` and an hourly run publish `_site/` to GitHub Pages. |
 
 ## Preview
 
@@ -42,9 +42,7 @@ The release versions are placeholders in `site/`:
 | `{{DEADFIN_WEB_VERSION}}` | The deadfin-web tag in the `Dockerfile` of that release. |
 
 `scripts/stamp-versions.sh` reads both from GitHub at each build. The
-Deadfin `release.yml` sends a `deadfin-release` dispatch after it creates
-the GitHub Release, so the site follows a release in minutes. The daily run
-is the fallback.
+hourly run publishes a new release within an hour.
 
 The "Next" list follows the `Unreleased` section of `CHANGELOG.md` on the
 next release branch. Change it in `site/index.html` by hand. `site/deadfin.svg` is `docs/assets/deadfin.svg` from

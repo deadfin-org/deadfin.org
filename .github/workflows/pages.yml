@@ -1,16 +1,14 @@
 name: pages
 
-# A push to main, the daily schedule and a deadfin-release dispatch from the
-# Deadfin release workflow publish the site. Other refs build and check only.
+# A push to main and the hourly schedule publish the site, so a new Deadfin
+# release reaches it within an hour. Other refs build and check only.
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: "17 6 * * *"
-  repository_dispatch:
-    types: [deadfin-release]
+    - cron: "17 * * * *"
 
 permissions:
   contents: read
