@@ -10,15 +10,20 @@ problems with the site there.
 
 | Path | Holds |
 |---|---|
-| `site/` | The published files. Plain HTML and CSS, no build step. |
+| `site/` | The source files. Plain HTML and CSS with release placeholders. |
 | `site/install/index.html` | Sends `/install` to the install guide on GitHub. |
-| `scripts/check-site.sh` | Required files, term scan, `CNAME` and `security.txt` checks. |
-| `.github/workflows/pages.yml` | Checks every pull request. A push to `main` publishes `site/` to GitHub Pages. |
+| `scripts/stamp-versions.sh` | Copies `site/` to `_site/` and stamps the release versions. |
+| `scripts/check-site.sh` | Required files, term scan, placeholder, `CNAME` and `security.txt` checks. |
+| `.github/workflows/pages.yml` | Checks every pull request. A push to `main` and an hourly run publish `_site/` to GitHub Pages. |
 
 ## Preview
 
 ```bash
-python3 -m http.server -d site 8080
+GH_TOKEN=$(gh auth token) scripts/stamp-versions.sh
+```
+
+```bash
+python3 -m http.server -d _site 8080
 ```
 
 Open <http://localhost:8080/>.
@@ -27,10 +32,20 @@ Open <http://localhost:8080/>.
 
 The client cards, quick start and client table follow the Deadfin
 `README.md` on `master` and `docs/alpha/install.md`. The quick start uses
-the `:latest` image tag and pins `v0.3.1` as the example; change both at
-each release. The "Next" list follows the `Unreleased` section of
-`CHANGELOG.md` on the next release branch. When those change, change
-`site/index.html` too. `site/deadfin.svg` is `docs/assets/deadfin.svg` from
+the `:latest` image tag.
+
+The release versions are placeholders in `site/`:
+
+| Placeholder | Value |
+|---|---|
+| `{{DEADFIN_VERSION}}` | The newest Deadfin release that is not a prerelease. |
+| `{{DEADFIN_WEB_VERSION}}` | The deadfin-web tag in the `Dockerfile` of that release. |
+
+`scripts/stamp-versions.sh` reads both from GitHub at each build. The
+hourly run publishes a new release within an hour.
+
+The "Next" list follows the `Unreleased` section of `CHANGELOG.md` on the
+next release branch. Change it in `site/index.html` by hand. `site/deadfin.svg` is `docs/assets/deadfin.svg` from
 the Deadfin repository. `site/og.png` is the GitHub social preview of
 `deadfin-org/deadfin`.
 

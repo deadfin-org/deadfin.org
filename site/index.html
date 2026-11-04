@@ -47,7 +47,7 @@
   <img class="logo" src="/deadfin.svg" alt="Deadfin logo" width="160" height="160">
   <h1>A Jellyfin-compatible media server written in Go.</h1>
   <p class="lede">Deadfin serves the Jellyfin 12.0 API, so your Jellyfin apps connect to it as they connect to Jellyfin. The image includes its own web client, deadfin-web.</p>
-  <p class="release">Current release: <a href="https://github.com/deadfin-org/deadfin/releases/tag/v0.3.1">v0.3.1</a> (alpha). 0.4.0 is in development: <a href="#next">see what comes next</a>.</p>
+  <p class="release">Current release: <a href="https://github.com/deadfin-org/deadfin/releases/tag/{{DEADFIN_VERSION}}">{{DEADFIN_VERSION}}</a> (alpha). 0.4.0 is in development: <a href="#next">see what comes next</a>.</p>
   <p class="cta">
     <a class="button primary" href="#quick-start">Quick start</a>
     <a class="button" href="https://github.com/deadfin-org/deadfin">Source on GitHub</a>
@@ -68,7 +68,7 @@
       <h3>deadfin-web <span class="badge alpha">Recommended</span></h3>
       <p class="pick">Recommended. Experimental alpha.</p>
       <dl>
-        <dt>Install</dt><dd>Included in the Deadfin image (deadfin-web v0.3.0). Deadfin serves it at <code>/web/</code>.</dd>
+        <dt>Install</dt><dd>Included in the Deadfin image (deadfin-web {{DEADFIN_WEB_VERSION}}). Deadfin serves it at <code>/web/</code>.</dd>
         <dt>Biggest gap</dt><dd>No admin dashboard after first-run setup. For users, library changes and server settings, <a href="https://github.com/deadfin-org/deadfin#use-jellyfin-web-instead">use jellyfin-web instead</a>.</dd>
       </dl>
       <a href="https://github.com/deadfin-org/deadfin-web">deadfin-web on GitHub</a>
@@ -119,7 +119,7 @@ sudo chown 65532:65532 ./deadfin/data</code></pre>
     </li>
     <li>
       <h3>Run Deadfin</h3>
-      <p><code>:latest</code> follows the newest release. <code>:alpha</code> also follows release candidates. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:v0.3.1</code>.</p>
+      <p><code>:latest</code> follows the newest release. <code>:alpha</code> also follows release candidates. To control upgrades, put a tag from the <a href="https://github.com/deadfin-org/deadfin/tags">tags page</a> in its place, for example <code>ghcr.io/deadfin-org/deadfin:{{DEADFIN_VERSION}}</code>.</p>
 <pre><code># compose.yaml
 services:
   deadfin:
